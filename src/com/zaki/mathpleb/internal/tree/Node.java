@@ -1,8 +1,11 @@
-package com.zaki.mathpleb.internal.impl;
+package com.zaki.mathpleb.internal.tree;
 
-import com.zaki.mathpleb.internal.impl.lang.PlebObject;
-import com.zaki.mathpleb.internal.impl.lang.PlebOperator;
-import com.zaki.mathpleb.internal.impl.lang.PlebPrimitive;
+import com.zaki.mathpleb.internal.lang.PlebObject;
+import com.zaki.mathpleb.internal.lang.PlebOperator;
+import com.zaki.mathpleb.internal.lang.PlebPrimitive;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Node {
 
@@ -50,8 +53,18 @@ public class Node {
     }
 
     private PlebObject computeOperatorInternal(PlebOperator operator) {
+
         PlebPrimitive leftResult = left != null ? (PlebPrimitive) left.compute() : null;
         PlebPrimitive rightResult = right != null ? (PlebPrimitive) right.compute() : null;
-        return operator.consume(leftResult, rightResult);
+
+        List<PlebPrimitive> args = new ArrayList<>();
+        if (leftResult != null) {
+            args.add(leftResult);
+        }
+        if (rightResult != null) {
+            args.add(rightResult);
+        }
+
+        return operator.consume(args.toArray(new PlebPrimitive[args.size()]));
     }
 }
