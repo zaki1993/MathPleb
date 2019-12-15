@@ -7,7 +7,6 @@ import com.zaki.mathpleb.internal.tree.ExpressionTree;
 import com.zaki.mathpleb.internal.tree.Node;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class PlebObjectBuilder {
 

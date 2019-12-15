@@ -7,10 +7,10 @@ import com.zaki.mathpleb.internal.lang.operator.Precedence;
 
 import java.util.function.Function;
 
-public class CotgOperator extends Operator {
+public class AbsOperator extends Operator {
 
-    public CotgOperator() {
-        super(Precedence.LOW, "cotg");
+    public AbsOperator() {
+        super(Precedence.LOW, "abs");
     }
 
     @Override
@@ -30,6 +30,6 @@ public class CotgOperator extends Operator {
 
     @Override
     protected Function<Double, Double> getFunction() {
-        return MathPleb::cotan;
+        return MathPleb::abs;
     }
 }

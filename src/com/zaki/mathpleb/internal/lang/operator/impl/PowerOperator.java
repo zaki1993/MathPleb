@@ -1,16 +1,15 @@
 package com.zaki.mathpleb.internal.lang.operator.impl;
 
 import com.zaki.mathpleb.internal.lang.PlebPrimitive;
-import com.zaki.mathpleb.internal.lang.math.MathPleb;
 import com.zaki.mathpleb.internal.lang.operator.Operator;
 import com.zaki.mathpleb.internal.lang.operator.Precedence;
 
 import java.util.function.BiFunction;
 
-public class DivideOperator extends Operator {
+public class PowerOperator extends Operator {
 
-    public DivideOperator() {
-        super(Precedence.HIGH, "/");
+    public PowerOperator() {
+        super(Precedence.HIGHEST, "^");
     }
 
     @Override
@@ -25,6 +24,6 @@ public class DivideOperator extends Operator {
 
     @Override
     protected BiFunction<Double, Double, Double> getFunction() {
-        return MathPleb::divide;
+        return Math::pow;
     }
 }

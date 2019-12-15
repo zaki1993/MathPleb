@@ -7,29 +7,30 @@ import com.zaki.mathpleb.internal.tree.Node;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Parser {
 
-    // TODO return tree
-    public String parse(String input) {
+    private static final String SINGLE_CHAR_OPERATOR_REGXP = "\\+|\\-|\\*|\\/|\\^|\\%";
+
+    public Node parse(String input) {
 
         List<String> inputList = parseInput(input);
         List<PlebObject> plebInput = convertInputToPlebList(inputList);
         System.out.println("Input is: " + plebInput);
 
-        Node expressionTree = new ExpressionTree().buildTree(plebInput);
+        return new ExpressionTree().buildTree(plebInput);
+    }
 
-        return String.valueOf(expressionTree.compute());
+    public String compute(Node tree) {
+        return String.valueOf(tree.compute());
     }
 
     public List<String> parseInput(String input) {
 
         input = input.replaceAll("\\s+", "");
-        String[] inputArr = input.split("((?<=\\+|\\-|\\*|\\/)|(?=\\+|\\-|\\*|\\/))");
+        String[] inputArr = input.split("((?<=" + SINGLE_CHAR_OPERATOR_REGXP + ")|(?=" + SINGLE_CHAR_OPERATOR_REGXP + "))");
 
-        List inputList = new ArrayList<>();
+        List<String> inputList = new ArrayList<>();
         // Search for ( followed by number or letter and concatenate until we find )
         boolean foundOpenParentheses = false;
         String formulaToConstruct = "";
@@ -51,6 +52,23 @@ public class Parser {
                 formulaToConstruct += inputArr[i];
             } else {
                 inputList.add(inputArr[i]);
+            }
+        }
+
+        // check whether we have situations like "1 * -1"
+        // we have to parse [-, 1] as '-1'
+        // check whether if we have '-', the previous string is operator and is single character operator
+        // in that case concatenate the next string with the '-'
+        for (int i = 0; i < inputList.size(); i++) {
+            if (inputList.get(i).equals("-") &&
+                    i - 1 >= 0 &&
+                    inputList.get(i - 1).matches(SINGLE_CHAR_OPERATOR_REGXP) &&
+                    i + 1 < inputList.size()) {
+                String combinedOperator = inputList.get(i) + inputList.get(i + 1);
+                // remove the two consecutive characters
+                inputList.remove(i);
+                inputList.remove(i);
+                inputList.add(i, combinedOperator);
             }
         }
 

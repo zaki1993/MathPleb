@@ -16,10 +16,13 @@ public class OperatorBuilder {
         operatorDefs.put("\\-", SubtractOperator.class);
         operatorDefs.put("\\*", MultiplyOperator.class);
         operatorDefs.put("\\/", DivideOperator.class);
+        operatorDefs.put("\\%", ModuloOperator.class);
+        operatorDefs.put("\\^", PowerOperator.class);
         operatorDefs.put("sin\\(.*\\)", SinOperator.class);
         operatorDefs.put("cos\\(.*\\)", CosOperator.class);
         operatorDefs.put("tg\\(.*\\)", TgOperator.class);
         operatorDefs.put("cotg\\(.*\\)", CotgOperator.class);
+        operatorDefs.put("abs\\(.*\\)", AbsOperator.class);
     }
 
     private OperatorBuilder() {

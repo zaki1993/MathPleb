@@ -6,6 +6,7 @@ import com.zaki.mathpleb.internal.lang.PlebPrimitive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Node {
 
@@ -13,11 +14,13 @@ public class Node {
     private PlebObject obj;
     private Node left;
     private Node right;
+    private Node parent;
 
     public Node(PlebObject obj, boolean isOperator) {
         this.obj = obj;
         this.left = null;
         this.right = null;
+        this.parent = null;
         this.isOperator = isOperator;
     }
 
@@ -27,10 +30,20 @@ public class Node {
 
     public void setLeft(Node left) {
         this.left = left;
+        left.setParent(this);
     }
 
     public void setRight(Node right) {
         this.right = right;
+        right.setParent(this);
+    }
+
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
+
+    public Node getParent() {
+        return this.parent;
     }
 
     public Node getLeft() {
@@ -66,5 +79,22 @@ public class Node {
         }
 
         return operator.consume(args.toArray(new PlebPrimitive[args.size()]));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return isOperator == node.isOperator &&
+                obj.equals(node.obj) &&
+                left.equals(node.left) &&
+                right.equals(node.right) &&
+                parent.equals(node.parent);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isOperator, obj, left, right, parent);
     }
 }

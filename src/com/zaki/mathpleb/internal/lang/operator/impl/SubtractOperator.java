@@ -1,46 +1,39 @@
 package com.zaki.mathpleb.internal.lang.operator.impl;
 
 import com.zaki.mathpleb.internal.lang.PlebPrimitive;
+import com.zaki.mathpleb.internal.lang.math.MathPleb;
 import com.zaki.mathpleb.internal.lang.operator.Operator;
 import com.zaki.mathpleb.internal.lang.operator.Precedence;
-import com.zaki.mathpleb.internal.lang.operator.exception.InvalidArgumentException;
-import com.zaki.mathpleb.internal.lang.operator.exception.InvalidArgumentNumberException;
+
+import java.util.function.BiFunction;
 
 public class SubtractOperator extends Operator {
 
-    private static final String SIGN = "-";
-
     public SubtractOperator() {
-        super(Precedence.LOWEST, SIGN);
-    }
-
-    @Override
-    protected boolean validateArguments(PlebPrimitive... args) {
-
-        if (args.length != 2) {
-            throw new InvalidArgumentNumberException();
-        }
-        PlebPrimitive a = args[0];
-        PlebPrimitive b = args[1];
-
-        if (a == null || b == null) {
-            throw new InvalidArgumentException();
-        }
-
-        return true;
+        super(Precedence.LOWEST, "-");
     }
 
     @Override
     protected PlebPrimitive consumeInternal(PlebPrimitive... args) {
-
-        PlebPrimitive result;
-
-        if (!isExpression(args)) {
-            result = new PlebPrimitive(args[0].getValueAsDouble() - args[1].getValueAsDouble());
-        } else {
-            result = new PlebPrimitive(args[0] + " " + SIGN + " " + args[1]);
+        try {
+            return consumeInternal_v2(args);
+        } catch (Exception e) {
+            // handle the case when we have negation only
+            return new PlebPrimitive("-" + args[0].toString());
         }
+    }
 
-        return result;
+    @Override
+    protected boolean validateArguments(PlebPrimitive... args) {
+        try {
+           return validateArguments_v1(args);
+        } catch (Exception e) {
+           return validateArguments_v2(args);
+        }
+    }
+
+    @Override
+    protected BiFunction<Double, Double, Double> getFunction() {
+        return MathPleb::subtract;
     }
 }

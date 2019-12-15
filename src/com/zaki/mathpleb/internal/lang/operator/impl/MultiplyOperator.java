@@ -1,46 +1,30 @@
 package com.zaki.mathpleb.internal.lang.operator.impl;
 
 import com.zaki.mathpleb.internal.lang.PlebPrimitive;
+import com.zaki.mathpleb.internal.lang.math.MathPleb;
 import com.zaki.mathpleb.internal.lang.operator.Operator;
 import com.zaki.mathpleb.internal.lang.operator.Precedence;
-import com.zaki.mathpleb.internal.lang.operator.exception.InvalidArgumentException;
-import com.zaki.mathpleb.internal.lang.operator.exception.InvalidArgumentNumberException;
+
+import java.util.function.BiFunction;
 
 public class MultiplyOperator extends Operator {
 
-    private static final String SIGN = "*";
-
     public MultiplyOperator() {
-        super(Precedence.HIGHEST, SIGN);
-    }
-
-    @Override
-    protected boolean validateArguments(PlebPrimitive... args) {
-
-        if (args.length != 2) {
-            throw   new InvalidArgumentNumberException();
-        }
-        PlebPrimitive a = args[0];
-        PlebPrimitive b = args[1];
-
-        if (a == null || b == null) {
-            throw new InvalidArgumentException();
-        }
-
-        return true;
+        super(Precedence.HIGH, "*");
     }
 
     @Override
     protected PlebPrimitive consumeInternal(PlebPrimitive... args) {
+        return consumeInternal_v2(args);
+    }
 
-        PlebPrimitive result;
+    @Override
+    protected boolean validateArguments(PlebPrimitive... args) {
+        return validateArguments_v2(args);
+    }
 
-        if (!isExpression(args)) {
-            result = new PlebPrimitive(args[0].getValueAsDouble() * args[1].getValueAsDouble());
-        } else {
-            result = new PlebPrimitive(args[0] + " " + SIGN + " " + args[1]);
-        }
-
-        return result;
+    @Override
+    protected BiFunction<Double, Double, Double> getFunction() {
+        return MathPleb::multiply;
     }
 }

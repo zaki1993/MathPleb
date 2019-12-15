@@ -41,36 +41,69 @@ public class ExpressionTree {
                     if (!stack.isEmpty()) {
                         Node top = stack.pop();
                         if (isOperator(top.getPlebObject())) {
-                            // find right most operator
-                            Node toWorkWith = null;
-                            if (top.getRight() != null) {
-                                if (top.getRight().getLeft() != null) {
-                                    toWorkWith = findRightMostNode(top);
-                                } else {
-                                    toWorkWith = top;
-                                }
-                            } else {
-                                toWorkWith = top;
-                            }
-
-                            Precedence toWorkWithPrecedence = ((PlebOperator) toWorkWith.getPlebObject()).getPrecedence();
-                            Precedence currentPrecedence = ((PlebOperator) current).getPrecedence();
-
-                            // right most has greatest precedence, so it should stay like this
-                            if (toWorkWithPrecedence.compareTo(currentPrecedence) >= 0) {
-                                // add the current as a parent of the top
-                                if (toWorkWith.getLeft() == null) {
-                                    toWorkWith.setLeft(operator);
-                                } else {
-                                    toWorkWith.setRight(operator);
-                                }
+                            if (top.getLeft() == null) {
+                                top.setLeft(operator);
+                                stack.push(top);
+                            } else if (top.getRight() == null) {
+                                top.setRight(operator);
                                 stack.push(top);
                             } else {
-                                // current operator has greater precedence, so swap with top one
-                                Node topRight = toWorkWith.getRight();
-                                operator.setLeft(topRight);
-                                toWorkWith.setRight(operator);
-                                stack.push(toWorkWith);
+                                Precedence currentPrecedence = ((PlebOperator) current).getPrecedence();
+                                Precedence topPrecedence = ((PlebOperator) top.getPlebObject()).getPrecedence();
+
+                                Node toWorkWith;
+                                if (topPrecedence.compareTo(currentPrecedence) >= 0) {
+                                    toWorkWith = top;
+                                } else {
+                                    // find right most operator
+                                    toWorkWith = findRightMostNode(top);
+                                    if (!isOperator(toWorkWith.getPlebObject())) {
+                                        toWorkWith = toWorkWith.getParent();
+                                    }
+                                }
+
+                                Precedence toWorkWithPrecedence = ((PlebOperator) toWorkWith.getPlebObject()).getPrecedence();
+
+                                // right most has greatest precedence, so it should stay like this
+                                if (toWorkWithPrecedence.compareTo(currentPrecedence) >= 0) {
+                                    Node parent = toWorkWith.getParent();
+                                    if (parent != null) {
+                                        Node parentLeft = parent.getLeft();
+                                        if (toWorkWith.equals(parentLeft)) {
+                                            parent.setLeft(operator);
+                                        } else {
+                                            parent.setRight(operator);
+                                        }
+                                        operator.setLeft(toWorkWith);
+                                        stack.push(top);
+                                    } else {
+                                        operator.setLeft(toWorkWith);
+                                        stack.push(operator);
+                                    }
+                                } else {
+                                    // current operator has greater precedence, so swap with top one
+                                    Node toWorkWithRight = toWorkWith.getRight();
+                                    if (toWorkWithRight == null) {
+                                        Node parent = toWorkWith.getParent();
+                                        if (parent != null) {
+                                            Node parentLeft = parent.getLeft();
+                                            if (toWorkWith.equals(parentLeft)) {
+                                                parent.setLeft(operator);
+                                            } else {
+                                                parent.setRight(operator);
+                                            }
+                                            operator.setLeft(toWorkWith);
+                                            stack.push(top);
+                                        } else {
+                                            operator.setLeft(toWorkWith);
+                                            stack.push(operator);
+                                        }
+                                    } else {
+                                        operator.setLeft(toWorkWithRight);
+                                        toWorkWith.setRight(operator);
+                                        stack.push(toWorkWith);
+                                    }
+                                }
                             }
                         } else {
                             operator.setLeft(top);
@@ -137,7 +170,7 @@ public class ExpressionTree {
             Node left = top.getLeft();
             Node right = top.getRight();
 
-            if ((left == null && right != null) || (left != null && right == null)) {
+            if (left == null || right == null) {
                 result = top;
             }
             if (left != null && right != null) {

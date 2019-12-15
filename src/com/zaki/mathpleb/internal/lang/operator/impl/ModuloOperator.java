@@ -7,10 +7,10 @@ import com.zaki.mathpleb.internal.lang.operator.Precedence;
 
 import java.util.function.BiFunction;
 
-public class DivideOperator extends Operator {
+public class ModuloOperator extends Operator {
 
-    public DivideOperator() {
-        super(Precedence.HIGH, "/");
+    public ModuloOperator() {
+        super(Precedence.HIGHEST, "%");
     }
 
     @Override
@@ -25,6 +25,6 @@ public class DivideOperator extends Operator {
 
     @Override
     protected BiFunction<Double, Double, Double> getFunction() {
-        return MathPleb::divide;
+        return MathPleb::modulo;
     }
 }
