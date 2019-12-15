@@ -20,7 +20,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="MathPleb" target="1.5" />
+      <module name="MathPleb" target="10" />
     </bytecodeTargetLevel>
   </component>
 </project>
